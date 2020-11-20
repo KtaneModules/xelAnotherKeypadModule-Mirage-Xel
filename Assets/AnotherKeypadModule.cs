@@ -83,7 +83,7 @@ public class AnotherKeypadModule : MonoBehaviour {
             yield return new WaitForSeconds(0.3f);
             count++;
         }
-        module.HandleStrike();
+        if (!solved) module.HandleStrike();
         foreach (MeshRenderer i in leds) i.material = mats[0];
     }
 #pragma warning disable 414
