@@ -19,6 +19,7 @@ public class AnotherKeypadModule : MonoBehaviour {
     int moduleId;
     static int moduleIdCounter = 1;
     bool solved;
+    bool striking;
     void Awake()
     {
         moduleId = moduleIdCounter++;
@@ -46,7 +47,7 @@ public class AnotherKeypadModule : MonoBehaviour {
     }
 
 	void PressKey (int index) {
-		if (!solved)
+		if (!solved && !striking)
         {
             keys[index].AddInteractionPunch();
             sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.BigButtonPress, transform);
@@ -68,13 +69,13 @@ public class AnotherKeypadModule : MonoBehaviour {
             {
                 Debug.LogFormat("[Another Keypad Module #{0}] That was incorrect. Strike!", moduleId);
                 StartCoroutine(Strike(index));
-                Activate();
             }
         }
 	}
     IEnumerator Strike(int index)
     {
         int count = 0;
+        striking = true;
         while (count < 3)
         {
             leds[index].material = mats[2];
@@ -83,8 +84,10 @@ public class AnotherKeypadModule : MonoBehaviour {
             yield return new WaitForSeconds(0.3f);
             count++;
         }
-        if (!solved) module.HandleStrike();
+        module.HandleStrike();
         foreach (MeshRenderer i in leds) i.material = mats[0];
+        striking = false;
+        Activate();
     }
 #pragma warning disable 414
     private string TwitchHelpMessage = "use '!{0} 1234' to press the keys in reading order.";
